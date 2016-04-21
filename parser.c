@@ -51,7 +51,7 @@ void F()
 void RP()
 {
 	while(token==FUNC)
-		T();
+		F();
 }
 
 void D()
