@@ -2,6 +2,7 @@
 #include <token.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <linkedlist.h>
 extern LIST* symbols
 
 
