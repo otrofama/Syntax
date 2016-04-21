@@ -5,6 +5,7 @@
 #include <stdlib.h>
 /*
 #include "linkedlist.h"
+lex
 List* symbols;
 */
 int columns;	//variable que cuenta caracteres
