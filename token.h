@@ -47,7 +47,7 @@ git config --global user.mail <mail>*/
 #define _NOT		41 //!
 #define DMAS		43 //++
 #define DMENOS		44 //--
-#define COMMENT		45 //--
+//#define COMMENT		45 //--
 #define IGUAL		46 //=
 
 
