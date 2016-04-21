@@ -25,7 +25,8 @@ real {digito}*"."{digito}+
 
 <INITIAL>
 {
-	int {return INT;}
+	int {yylval.line=yylineno;
+		return INT;}
 
 	float {	yylval.line=yylineno;
 			return FLOAT;}
