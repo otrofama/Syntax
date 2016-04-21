@@ -48,13 +48,18 @@ void F()
 void RP()
 {
 	while(token==FUNC)
-	T();
+		T();
 }
 
 void D()
 {
 	
 }
+void K()
+{
+
+}
+
 void DP()
 {
 	while(token==var)
@@ -92,6 +97,15 @@ void V()
 			break;
 		default:
 			error();
+	}
+}
+
+void IP()
+{
+	if (token==IGUAL)
+	{
+		eat(IGUAL);
+		V();
 	}
 }
 
@@ -137,6 +151,7 @@ void M()
 {
 	eat(FOR);
 	eat(PAR_AB);
+	eat(id);
 	A();
 	eat(PCOM);
 	U();
@@ -215,6 +230,12 @@ void E2()
 {
 
 }
+
+void E3P()
+{
+	A();
+}
+
 void E3()
 {
 	switch(token)
@@ -226,6 +247,7 @@ void E3()
 			break;
 		case ID:
 			eat(ID);
+			E3P();
 			break;
 		case CARACTERES:
 			eat(CARACTERES);
@@ -249,7 +271,7 @@ void JP()
 	while(token==WHILE || token==FOR ||token==PAR_AB||token==ID
 		||token==CARACTERES||token==IF||token==SWITCH)
 	{
-		if(token==WHILE)
+		K();
 	}
 }
 
@@ -260,7 +282,6 @@ void B()
 
 void A()
 {
-	eat(ID);
 	eat(IGUAL);
 	E();
 }
@@ -310,6 +331,7 @@ void U3()
 	U4();
 	U8();
 }
+
 void U4()
 {
 	switch(token)
@@ -323,7 +345,7 @@ void U4()
 }
 void U5()
 {
-	while(token=_OR)
+	while(token==_OR)
 	{
 		eat(_OR);
 		U1();
