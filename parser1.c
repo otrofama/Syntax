@@ -304,28 +304,38 @@ void E3()
 		case CARACTERES:
 			eat(CARACTERES);
 			break;
+		default:
+			error();
 	}
-	if (toke==ID)/////////////////////////
+	/*if (toke==ID)/////////////////////////
 		A();///////////////////////////////
+		*/
 }
 void E3P(){
 	A();
 }
 void E4()
 {
-	switch(token){
-		case POR:
-			eat(POR);
-			E3();
-			break;
-		case DIV:
-			eat(DIV);
-			E3();
-		case MOD:
-			eat(MOD);
-			E3();
+	while(token==POR||token==DIV||token==MOD)
+	{
+		switch(token)
+		{
+			case POR:
+				eat(POR);
+				E3();
+				break;
+			case DIV:
+				eat(DIV);
+				E3();
+				break;
+			case MOD:
+				eat(MOD);
+				E3();
+				break;
+			defaul:
+				error();
+		}		
 	}
-
 }
 
 void J()
@@ -345,31 +355,101 @@ void JP()
 
 void B()
 {
-	if(token==INT || token==FLOAT || token==CHAR|| token==VAR){
+	if(token==INT || token==FLOAT || token==CHAR|| token==VAR)
+	{
 		D();
 		J();
 	}
-	else if (token==WHILE || token==FOR || token==PAR_AB ||
+	else 
+	{
+		if (token==WHILE || token==FOR || token==PAR_AB ||
 		token==ID || token==CARACTERES || token==IF || token==SWITCH)
-		J();
-		 else
+			J();
+		else
 		 	error();
+	}
+		
 }
-void K(){
-	if(token==/* */ || token==/*  */)//X
+void K()
+{
+	switch(token)
+	{
+		case WHILE:
+			X();
+			break;
+		case FOR:
+			M();
+			break;
+		case PAR_AB:
+			E();
+			break;
+		case ID:
+			E();
+			break;
+		case CARACTERES:
+			E();
+			break;
+		case IF:
+			Z();
+			break;
+		case SWITCH:
+			S();
+			break;
+		default:
+			error();
+	}
+	/*
+	//if(token== || token==)//X
 		X();
-	else if(token==/*  */)//M
+	else if(token==)//M
 		M();
 		else if(token==PAR_AB || token==ID || token== CARACTERES)//E
 			E();
 			else if(token==ELSE)//Z
 				Z();
-			else if(token==/*  */)//S
+			else if(token==)//S
+	if (token==WHILE)
+	{
+		X();
+	}
+	else
+	{
+		if (token==FOR)
+		{
+			M();
+		}
+		else
+		{
+			if (token==PAR_AB||token==ID||token==CARACTERES)
+			{
+				E();
+			}
+			else
+			{
+				if (token==IF)
+				{
+					Z();
+				}
+				else
+				{
+					if (token==SWITCH)
+					{
+						S();
+					}
+					else
+					{
+						error();
+					}
+				}
+			}
+		}
+	}
+	*/
 }
 
 void A()
 {
-	eat(ID);////////////
+	//eat(ID);////////////
 	eat(IGUAL);
 	E();
 }
@@ -396,17 +476,26 @@ void OP()
 
 void Q()
 {
-	if(token==PAR_AB || token==ID || token== CARACTERES){
+	if(token==PAR_AB || token==ID || token== CARACTERES)
+	{
 		E();
 		eat(PCOM);
 	}
-	else if(token==RETURN){
-		eat(RETURN);
-		eat(PCOM);
-	}
-	else if(token==BREAK){
-		eat(BREAK);
-		eat(PCOM);
+	else 
+	{
+		if(token==RETURN)
+		{
+			eat(RETURN);
+			eat(PCOM);
+		}
+		else
+		{
+			if(token==BREAK)
+			{
+				eat(BREAK);
+				eat(PCOM);
+			}
+		}
 	}
 }
 
@@ -432,14 +521,18 @@ void U3()
 }
 void U4()
 {
-	if(token==_NOT){
+	if(token==_NOT)
+	{
 		eat(_NOT);
 		U4();
 	}
-	else if(token==PAR_AB || token==ID || token== CARACTERES)
-		E();
 	else
-		error();
+	{
+		if(token==PAR_AB || token==ID || token== CARACTERES)
+			E();
+		else
+			error();
+	} 
 }
 void U5()
 {
@@ -460,35 +553,48 @@ void U6()
 
 void U7()
 {
-	while(token== DIF || token==DOB_IG){
-		if(token==DIF){
+	while(token== DIF || token==DOB_IG)
+	{
+		if(token==DIF)
+		{
 			eat(DIF);
 			U3();
 		}
 		else
-			eat(DOB_IG);
-			U3();
+		{
+			if (token==DOB_IG)
+			{
+				eat(DOB_IG);
+				U3();
+			}
+		}
 	}
 }
 void U8()
 {
-	switch(token){
-		case PIC_AB:
-			eat(PIC_AB);
-			E4();
-			break;
-		case MEN_IG:
-			eat(MEN_IG);
-			E4();
-			break;
-		case PIC_CI:
-			eat(PIC_CI);
-			E4();
-			break;
-		case MAY_IG:
-			eat(MAY_IG);
-			E4();
-			break;
+	while(token==PIC_AB||token==MEN_IG||token==PIC_CI||token==MAY_IG)
+	{
+		switch(token)
+		{
+			case PIC_AB:
+				eat(PIC_AB);
+				U4();
+				break;
+			case MEN_IG:
+				eat(MEN_IG);
+				U4();
+				break;
+			case PIC_CI:
+				eat(PIC_CI);
+				U4();
+				break;
+			case MAY_IG:
+				eat(MAY_IG);
+				U4();
+				break;
+			default:
+				error();
+		}
 	}
 }
 
