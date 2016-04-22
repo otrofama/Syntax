@@ -604,11 +604,35 @@ void init()
 	//insertar simbolos
 }
 
-int main(int argc, char const *argv[])
+int main(int argc, char** argv)
 {
 	//abrir archivo...
-	token=yylex();
+	if (argc > 1)
+	{
+		FILE *file = fopen(argv[1],"r");
+		if (!file);
+		{
+			perror("No se pudo abrir archivo");
+			exit(1);
+		}
+		else
+		{
+			yyin = file;
+			yyout = fopen("output.dat","w");
+			
+			token = yylex();
+			init();		
+			P();		//Símbolo inicial
+			
+			fclose(yyin);
+			fclose(yyout);
+		}
+	}
+	else
+		printf("No se ingreso archivo.\n");
+	/*token=yylex();
 	init();
 	P();		//simbolo inicial..
+	*/
 	return 0;
 }
