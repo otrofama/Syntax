@@ -1,8 +1,8 @@
 //PARSER.c
-#include <token.h>
+#include "token.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include <linkedlist.h>
+#include "linkedlist.h"
 extern LIST* symbols
 
 
@@ -13,6 +13,7 @@ void error()
 {
 	printf("SYNTAX ERROR\n");
 }
+
 void eat(int tok)
 {
 	if (token==tok)

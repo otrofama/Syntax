@@ -1,15 +1,17 @@
 //PARSER
-#include <token.h>
-extern LIST* symbols
+#include "Producciones.h"
+#include "token.h"
+#include "linkedlist.h"
+#include <stdio.h>
+#include <stdlib.h>
 
-
+extern List* symbols;
+extern FILE *yyin, *yyout;
+extern int yylex(void);
 int token;
 
 
-void error()
-{
-	printf("SYNTAX ERROR\n");
-}
+
 void eat(int tok)
 {
 	if (token==tok)
@@ -20,16 +22,42 @@ void eat(int tok)
 
 
 //Segun diagramas de sintaxis
-void P()
+
+void D()
 {
-	D();
-	R();
+	if(token==VAR)
+	{
+		eat(VAR);
+		eat(LLA_AB);
+		C();
+		eat(LLA_CI);
+		DP();
+	}	
+	//else if(token==INT ||FLOAT||CHAR||VAR){
+	else
+	{
+		if(token==INT||token==FLOAT||token==CHAR)
+		{
+			T();
+			L();
+			eat(PCOM);
+			DP();
+		}
+		else
+			error();
+	}
+	
 }
 
 void R()
 {
 	F();
 	RP();
+}
+void P()
+{
+	D();
+	R();
 }
 void F()
 {
@@ -66,36 +94,12 @@ void CP()
 		C();
 	}
 }
-void D()
-{
-	if(token==var)
-	{
-		eat(var);
-		eat(LLA_AB);
-		C();
-		eat(LLA_CI);
-		DP();
-	}	
-	//else if(token==INT ||FLOAT||CHAR||VAR){
-	else
-	{
-		if(token==INT||token==FLOAT||token==CHAR)
-		{
-			T();
-			L();
-			eat(PCOM);
-			DP();
-		}
-		else
-			error();
-	}
-	
-}
+
 void DP()
 {
-	while(token==var)
+	while(token==VAR)
 	{
-		eat(var);
+		eat(VAR);
 		T();
 		L();
 		eat(PCOM);
@@ -133,8 +137,11 @@ void V()
 {
 	switch(token)
 	{
-		case NUM:
-			eat(NUM);
+		case ENTEROS:
+			eat(ENTEROS);
+			break;
+		case FLOTANTES:
+			eat(FLOTANTES);
 			break;
 		case CARACTERES:
 			eat(CARACTERES);
@@ -246,14 +253,14 @@ void N()
 		case CASE:
 			eat(CASE);
 			V();
-			eat(PCOM);
+			eat(DPUN);
 			B();
 			Q();
 			N();
 			break;
 		case DEFAULT:
 			eat(DEFAULT);
-			eat(PCOM);
+			eat(DPUN);
 			B();
 			Q();
 			break;
@@ -455,11 +462,7 @@ void A()
 	E();
 }
 
-void O()
-{
-	eat(ID);
-	OP();
-}
+
 void OP()
 {
 	switch(token)
@@ -474,7 +477,11 @@ void OP()
 			error();
 	}
 }
-
+void O()
+{
+	eat(ID);
+	OP();
+}
 void Q()
 {
 	if(token==PAR_AB || token==ID || token== CARACTERES)
@@ -601,7 +608,7 @@ void U8()
 
 void init()
 {
-	symbols=(LIST*)malloc(sizeof(LIST));
+	//symbols=(List*)malloc(sizeof(List));
 	//insertar simbolos
 }
 
@@ -611,7 +618,7 @@ int main(int argc, char** argv)
 	if (argc > 1)
 	{
 		FILE *file = fopen(argv[1],"r");
-		if (!file);
+		if (!file)
 		{
 			perror("No se pudo abrir archivo");
 			exit(1);
@@ -620,9 +627,9 @@ int main(int argc, char** argv)
 		{
 			yyin = file;
 			yyout = fopen("output.dat","w");
-			
 			token = yylex();
-			init();		
+			
+			//init();		
 			P();		//Símbolo inicial
 			
 			fclose(yyin);

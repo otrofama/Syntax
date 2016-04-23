@@ -3,10 +3,10 @@
 #include "token.h"
 #include <string.h>
 #include <stdlib.h>
-/*
 #include "linkedlist.h"
-lex
 List* symbols;
+/*
+lex
 */
 int columns;	//variable que cuenta caracteres
 int comment=0;	//si hay comentario abierto
@@ -72,7 +72,7 @@ real {digito}*"."{digito}+
 
 	":"	{
 		yylval.line=yylineno;
-		return DP;}
+		return DPUN;}
 	";"	{
 		yylval.line=yylineno;
 		return PCOM;}
@@ -94,7 +94,7 @@ real {digito}*"."{digito}+
 
 	"}"	{
 		yylval.line=yylineno;
-		return DP;}
+		return DPUN;}
 
 	"+"	{
 		yylval.line=yylineno;
@@ -175,3 +175,84 @@ int yywrap()
 {
 	return 1;
 }
+
+
+int insert_end(List* list, char *str, int token)
+{
+	int pos = search(str,list);
+	if (pos != -1)
+	{
+		return pos;
+	}
+
+	Nodo* newtmp = crea_nodo(str, token);
+	Nodo* tmp = list->root;
+
+	if (!list->root)
+	{
+		list->root = newtmp;
+	}
+	else
+	{
+		while(tmp->next != NULL)
+		{
+			tmp = tmp->next;
+		}
+		tmp->next = newtmp;
+	}
+	list->num++;
+	return list->num -1;
+}
+//Nodo* crea_nodo(char* str, char* token)
+Nodo* crea_nodo(char* str, int token)
+{
+	Nodo* newnodo = (Nodo *)malloc(sizeof(Nodo));
+	int len = strlen(str);	
+	newnodo->tupla.str = malloc(len*sizeof(char));
+	strcpy(newnodo->tupla.str,str);
+	newnodo->tupla.token=token;
+	newnodo->next = NULL;
+	return newnodo;
+}
+int search(char* str, List* list)
+{
+	Nodo* tmp = list->root;
+	int pos = 0;
+
+	while(tmp)
+	{
+		if (strcmp(tmp->tupla.str,str) == 0)
+		{
+			return pos;
+		}
+		tmp = tmp->next;
+		pos++;
+	}
+	return -1;
+}
+
+void init_list(List *list)
+{
+	list->root = NULL;
+	list->num = 0;
+}
+void print(List* list)
+{
+	Nodo* tmp =  list->root;
+	printf("Tabla de indices:\n");
+	while(tmp != NULL)
+	{
+		printf("<%s, \t%d>\n",tmp->tupla.str, tmp->tupla.token);
+		tmp = tmp->next;
+	}
+}
+
+//void error(char* msg, char* yytxt,int ychar,int ycolumn)
+void error()
+{
+	//printf("%s en: %s, línea: %d, caracter: %d\n",msg,yytext,ycolumn,ychar);
+	printf("error\n");
+	exit(-1);
+}
+
+
