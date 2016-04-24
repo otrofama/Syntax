@@ -30,7 +30,8 @@ Nodo* crea_nodo(char* str, int token);
 int search(char* str, List* list);
 void init_list(List *list);
 void print(List* list);
-void error();
+//void error();
+void error(char* msg);
 //void error(char* msg, char* yytxt,int ychar,int ycolumn);
 
 

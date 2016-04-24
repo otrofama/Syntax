@@ -1,76 +1,35 @@
-/*
-	parser1.c
-	Analizador Sintáctico
-
-	Olivares Castillo José Luis
-	Pérez Escorza Iván
-
-	23/Abril/2016
-
-*/
+//PARSER
+#include <token.h>
+extern LIST* symbols
 
 
-
-//Librerías necesarias para ejecutar el parser.
-#include "Producciones.h"
-#include "token.h"
-#include "linkedlist.h"
-#include <stdio.h>
-#include <stdlib.h>
-//Variables globales
-extern List* list;
-extern FILE *yyin;
-extern int yylex(void);
 int token;
-extern YYSTYPE yylval;
-//int pos;
 
 
-void eat(int tok)		
-{/*función que va leyendo los tokens de la entrada, en caso de ser inválido, envía error*/
+void error()
+{
+	printf("SYNTAX ERROR\n");
+}
+void eat(int tok)
+{
 	if (token==tok)
 		token=yylex();
 	else
-		error("SYNTAX ERROR");//SYNTAX ERROR
+		error();//SYNTAX ERROR
 }
 
-//Funciones según el diagrama de sintáxis//
 
-void D()
+//Segun diagramas de sintaxis
+void P()
 {
-	if(token==VAR)
-	{
-		eat(VAR);
-		eat(LLA_AB);
-		C();
-		eat(LLA_CI);
-		DP();
-	}	
-	//else if(token==INT ||FLOAT||CHAR||VAR){
-	else
-	{
-		if(token==INT||token==FLOAT||token==CHAR)
-		{
-			T();
-			L();
-			eat(PCOM);
-			DP();
-		}
-		else
-			error("SYNTAX ERROR");
-	}
-	
+	D();
+	R();
 }
 
 void R()
 {
 	F();
 	RP();
-}
-void P()
-{
-	D();
-	R();
 }
 void F()
 {
@@ -107,12 +66,36 @@ void CP()
 		C();
 	}
 }
-
+void D()
+{
+	if(token==var)
+	{
+		eat(var);
+		eat(LLA_AB);
+		C();
+		eat(LLA_CI);
+		DP();
+	}	
+	//else if(token==INT ||FLOAT||CHAR||VAR){
+	else
+	{
+		if(token==INT||token==FLOAT||token==CHAR)
+		{
+			T();
+			L();
+			eat(PCOM);
+			DP();
+		}
+		else
+			error();
+	}
+	
+}
 void DP()
 {
-	while(token==VAR)
+	while(token==var)
 	{
-		eat(VAR);
+		eat(var);
 		T();
 		L();
 		eat(PCOM);
@@ -150,11 +133,8 @@ void V()
 {
 	switch(token)
 	{
-		case ENTEROS:
-			eat(ENTEROS);
-			break;
-		case FLOTANTES:
-			eat(FLOTANTES);
+		case NUM:
+			eat(NUM);
 			break;
 		case CARACTERES:
 			eat(CARACTERES);
@@ -163,7 +143,7 @@ void V()
 			eat(ID);
 			break;
 		default:
-			error("SYNTAX ERROR");
+			error();
 	}
 }
 void T()
@@ -180,7 +160,7 @@ void T()
 			eat(CHAR);
 			break;
 		default:
-			error("SYNTAX ERROR");
+			error();
 	}
 }
 void G()
@@ -266,19 +246,19 @@ void N()
 		case CASE:
 			eat(CASE);
 			V();
-			eat(DPUN);
+			eat(PCOM);
 			B();
 			Q();
 			N();
 			break;
 		case DEFAULT:
 			eat(DEFAULT);
-			eat(DPUN);
+			eat(PCOM);
 			B();
 			Q();
 			break;
 		default:
-			error("SYNTAX ERROR");
+			error();
 	}
 }
 
@@ -325,14 +305,13 @@ void E3()
 			eat(CARACTERES);
 			break;
 		default:
-			error("SYNTAX ERROR");
+			error();
 	}
 	/*if (toke==ID)/////////////////////////
 		A();///////////////////////////////
 		*/
 }
-void E3P()
-{
+void E3P(){
 	A();
 }
 void E4()
@@ -354,7 +333,7 @@ void E4()
 				E3();
 				break;
 			defaul:
-				error("SYNTAX ERROR");
+				error();
 		}		
 	}
 }
@@ -387,7 +366,7 @@ void B()
 		token==ID || token==CARACTERES || token==IF || token==SWITCH)
 			J();
 		else
-		 	error("SYNTAX ERROR");
+		 	error();
 	}
 		
 }
@@ -417,7 +396,7 @@ void K()
 			S();
 			break;
 		default:
-			error("SYNTAX ERROR");
+			error();
 	}
 	/*
 	//if(token== || token==)//X
@@ -459,7 +438,7 @@ void K()
 					}
 					else
 					{
-						error("SYNTAX ERROR");
+						error();
 					}
 				}
 			}
@@ -475,7 +454,11 @@ void A()
 	E();
 }
 
-
+void O()
+{
+	eat(ID);
+	OP();
+}
 void OP()
 {
 	switch(token)
@@ -487,14 +470,10 @@ void OP()
 			eat(DMENOS);
 			break;
 		default:
-			error("SYNTAX ERROR");
+			error();
 	}
 }
-void O()
-{
-	eat(ID);
-	OP();
-}
+
 void Q()
 {
 	if(token==PAR_AB || token==ID || token== CARACTERES)
@@ -552,7 +531,7 @@ void U4()
 		if(token==PAR_AB || token==ID || token== CARACTERES)
 			E();
 		else
-			error("SYNTAX ERROR");
+			error();
 	} 
 }
 void U5()
@@ -614,43 +593,65 @@ void U8()
 				U4();
 				break;
 			default:
-				error("SYNTAX ERROR");
+				error();
 		}
 	}
 }
 
 void init()
-{//Inicializa la tabla de símbolos.
-	list=(List*)malloc(sizeof(List));
+{
+	symbols=(LIST*)malloc(sizeof(LIST));
+	//insertar simbolos
 }
 
 int main(int argc, char** argv)
 {
-	system("clear");
 	//abrir archivo...
 	if (argc > 1)
 	{
 		FILE *file = fopen(argv[1],"r");
-		if (!file)
+		if (!file);
 		{
 			perror("No se pudo abrir archivo");
 			exit(1);
 		}
 		else
 		{
+			//****************************************************************
+			init_list(&list);
+			insert_end(&list,"if",IF);
+			insert_end(&list,"else",ELSE);
+			insert_end(&list,"int",INT);
+			insert_end(&list,"float",FLOAT);
+			insert_end(&list,"char",CHAR);
+			insert_end(&list,"var",VAR);
+			insert_end(&list,"func",FUNC);
+			insert_end(&list,"arg",ARG);
+			insert_end(&list,"while",WHILE);
+			insert_end(&list,"switch",SWITCH);
+			insert_end(&list,"case",CASE);
+			insert_end(&list,"for",FOR);
+			insert_end(&list,"id",ID);
+			insert_end(&list,"return",RETURN);
+			insert_end(&list,"default",DEFAULT);
+			insert_end(&list,"break",BREAK);
+			//******************************************************************
 			yyin = file;
-			//yyout = fopen("output.dat","w");
-			init();		
-
-			token = yylex();
+			yyout = fopen("output.dat","w");
 			
+			token = yylex();
+			init();		
 			P();		//Símbolo inicial
-			print(list);
+			
 			fclose(yyin);
-			//fclose(yyout);
+			fclose(yyout);
 		}
 	}
 	else
 		printf("No se ingreso archivo.\n");
+	/*token=yylex();
+	init();
+	P();		//simbolo inicial..
+	*/
 	return 0;
 }

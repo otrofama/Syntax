@@ -54,5 +54,6 @@ union YYSTYPE
 	int line;
 	int column;
 };
+
 YYSTYPE yylval;
 
